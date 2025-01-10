@@ -99,9 +99,7 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 ## Contact
 For feedback or inquiries, please open an issue or contact us through the repository's discussion board.
 
-## Other Tips
-
-## React + TypeScript + Vite
+## Other Tips: React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
