@@ -1,4 +1,4 @@
-## Weather Dashboard Demo
+# Weather Dashboard Demo
 
 ## Overview
 Welcome to the **Weather Dashboard Demo**! This application provides users with accurate, real-time weather updates and forecasts for any selected location. Users can customize their experience through a range of features designed for convenience and personalization.
@@ -99,26 +99,9 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 ## Contact
 For feedback or inquiries, please open an issue or contact us through the repository's discussion board.
 
+## Other Tips
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# React + TypeScript + Vite
+## React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
