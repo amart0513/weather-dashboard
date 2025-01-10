@@ -1,6 +1,7 @@
 import type { GeocodingResponse, WeatherData } from "@/api/types";
 import { Card, CardContent } from "./ui/card";
 import { ArrowDown, ArrowUp, Droplets, Wind } from "lucide-react";
+import { useState } from "react";
 
 interface CurrentWeatherProps {
     data: WeatherData,
@@ -8,15 +9,20 @@ interface CurrentWeatherProps {
 }
 
 const CurrentWeather = ({data, locationName}: CurrentWeatherProps) => {
+    const [unit, setUnit] = useState<"C" | "F">("C");
 
     const {
         weather: [currentWeather],
-        main: { temp, feels_like, temp_min, temp_max, humidity},
-        wind: { speed},
+        main: { temp, feels_like, temp_min, temp_max, humidity },
+        wind: { speed },
     } = data;
 
-    // Format temperature
-    const formatTemp = (temp: number) => `${Math.round(temp)}°`;
+    // Convert Celsius to Fahrenheit
+    const convertToFahrenheit = (celsius: number) => Math.round((celsius * 9) / 5 + 32);
+
+    // Format temperature based on selected unit
+    const formatTemp = (temp: number) =>
+        unit === "F" ? `${convertToFahrenheit(temp)}°F` : `${Math.round(temp)}°C`;
 
     return (
         <Card className="overflow-hidden">
@@ -36,7 +42,6 @@ const CurrentWeather = ({data, locationName}: CurrentWeatherProps) => {
                             {locationName?.country}
                         </p>
                     </div>
-
                     <div className="flex items-center gap-2">
                         <p className="text-7xl font-bold tracking-tighter">
                             {formatTemp(temp)}
@@ -44,7 +49,7 @@ const CurrentWeather = ({data, locationName}: CurrentWeatherProps) => {
 
                         <div className="space-y-1">
                             <p className="text-sm font-medium text-muted-foreground">
-                                Feels like {formatTemp(feels_like)}
+                                 Feels like {formatTemp(feels_like)}
                             </p>
                             <div className="flex gap-2 text-sm font-medium">
                                 <span className="flex items-center gap-1 text-blue-500">
@@ -75,6 +80,13 @@ const CurrentWeather = ({data, locationName}: CurrentWeatherProps) => {
                                 <p className="text-sm text-muted-foreground">{speed} m/s</p>
                             </div>
                         </div>
+                        {/*button for C -> F */}
+                        <button
+                        className="space-y-3 px-2 py-1 text-sm border rounded text-green-600"
+                        onClick={() => setUnit((prev) => (prev === "C" ? "F" : "C"))}
+                        >
+                            Switch to {unit === "C" ? "Fahrenheit" : "Celsius"}
+                        </button>
                     </div>
                 </div>
 

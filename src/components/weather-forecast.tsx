@@ -1,7 +1,8 @@
-import type { ForecastData } from "@/api/types"
+import type { ForecastData } from "@/api/types";
 import { format } from "date-fns";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
 import { ArrowDown, ArrowUp, Droplets, Wind } from "lucide-react";
+import { useState } from "react";
 
 interface WeatherForecastProps {
     data: ForecastData;
@@ -14,18 +15,20 @@ interface DailyForecast {
     humidity: number;
     wind: number;
     weather: {
-      id: number;
-      main: string;
-      description: string;
-      icon: string;
+        id: number;
+        main: string;
+        description: string;
+        icon: string;
     };
 }
 
-const WeatherForecast = ({data}: WeatherForecastProps) => {
+const WeatherForecast = ({ data }: WeatherForecastProps) => {
+    const [unit, setUnit] = useState<"C" | "F">("C");
+
     const dailyForecasts = data.list.reduce((acc, forecast) => {
         const date = format(new Date(forecast.dt * 1000), "yyyy-MM-dd");
 
-        if(!acc[date]){
+        if (!acc[date]) {
             acc[date] = {
                 temp_min: forecast.main.temp_min,
                 temp_max: forecast.main.temp_max,
@@ -40,56 +43,74 @@ const WeatherForecast = ({data}: WeatherForecastProps) => {
         }
 
         return acc;
-
     }, {} as Record<string, DailyForecast>);
 
-    const nextDays = Object.values(dailyForecasts).slice(0,6);
-    const formatTemp = (temp: number) => `${Math.round(temp)}°`;
+    const nextDays = Object.values(dailyForecasts).slice(0, 6);
+
+    // Convert Celsius to Fahrenheit
+    const convertToFahrenheit = (celsius: number) => Math.round((celsius * 9) / 5 + 32);
+
+    // Format temperature based on selected unit
+    const formatTemp = (temp: number) =>
+        unit === "F" ? `${convertToFahrenheit(temp)}°F` : `${Math.round(temp)}°C`;
 
     return (
-            <Card>
-                <CardHeader>
-                    <CardTitle>5-Day Forecast</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="grid gap-4">
-                        {nextDays.map((day) => {
-                            return (
-                                <div key={day.date} className="grid grid-cols-3 items-center gap-4 rounded-lg border p-4">
-                                    <div>
-                                        <p className="font-medium">{format(new Date(day.date * 1000), "EEE, MMM d")}</p>
-                                        <p className="text-sm text-muted-foreground capitalize">{day.weather.description}</p>
-                                    </div>
-
-                                    <div className="flex justify-center gap-4">
-                                        <span className="flex items-center text-blue-500">
-                                            <ArrowDown className="mr-1 h-4 w-4" />
-                                            {formatTemp(day.temp_min)}
-                                        </span>
-                                        <span className="flex items-center text-red-500">
-                                            <ArrowUp className="mr-1 h-4 w-4" />
-                                            {formatTemp(day.temp_max)}
-                                        </span>
-                                    </div>
-
-                                    <div className="flex justify-end gap-4">
-                                        <span className="flex items-center gap-1">
-                                            <Droplets className="h-4 w-4 text-blue-500" />
-                                            <span className="text-sm">{day.humidity}%</span>
-                                        </span>
-                                        <span className="flex items-center gap-1">
-                                            <Wind className="h-4 w-4 text-blue-500" />
-                                            <span className="text-sm">{day.wind}m/s</span>
-                                        </span>
-                                    </div>
+        <Card>
+            <CardHeader className="flex justify-between">
+                <CardTitle>5-Day Forecast 
+                <button
+                    className="ml-4 px-2 py-1 text-sm border rounded text-green-600"
+                    onClick={() => setUnit((prev) => (prev === "C" ? "F" : "C"))}
+                >
+                    Switch to {unit === "C" ? "Fahrenheit" : "Celsius"}
+                </button>
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="grid gap-4">
+                    {nextDays.map((day) => {
+                        return (
+                            <div
+                                key={day.date}
+                                className="grid grid-cols-3 items-center gap-4 rounded-lg border p-4"
+                            >
+                                <div>
+                                    <p className="font-medium">
+                                        {format(new Date(day.date * 1000), "EEE, MMM d")}
+                                    </p>
+                                    <p className="text-sm text-muted-foreground capitalize">
+                                        {day.weather.description}
+                                    </p>
                                 </div>
-                            );
-                        })}
-                    </div>
-                </CardContent>
-            </Card>
 
+                                <div className="flex justify-center gap-4">
+                                    <span className="flex items-center text-blue-500">
+                                        <ArrowDown className="mr-1 h-4 w-4" />
+                                        {formatTemp(day.temp_min)}
+                                    </span>
+                                    <span className="flex items-center text-red-500">
+                                        <ArrowUp className="mr-1 h-4 w-4" />
+                                        {formatTemp(day.temp_max)}
+                                    </span>
+                                </div>
+
+                                <div className="flex justify-end gap-4">
+                                    <span className="flex items-center gap-1">
+                                        <Droplets className="h-4 w-4 text-blue-500" />
+                                        <span className="text-sm">{day.humidity}%</span>
+                                    </span>
+                                    <span className="flex items-center gap-1">
+                                        <Wind className="h-4 w-4 text-blue-500" />
+                                        <span className="text-sm">{day.wind} m/s</span>
+                                    </span>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </CardContent>
+        </Card>
     );
 };
 
-export default WeatherForecast
+export default WeatherForecast;
