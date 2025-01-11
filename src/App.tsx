@@ -29,9 +29,6 @@ function App() {
               <Route path="/" element={<WeatherDashboard/>}/>
               <Route path="/city/:cityName" element={<City/>}/>
               </Routes>
-
-
-
           </Layout>
         </ThemeProvider>
       </BrowserRouter>
